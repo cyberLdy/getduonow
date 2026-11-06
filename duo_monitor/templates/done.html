@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="__LANG__" dir="__DIR__">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GetDuoNow · You're on the list</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<style>
+  :root { --bg:#f5f5f2; --card:rgba(255,255,255,.78); --ink:#1d1d1f; --mute:#6e6e73; --faint:#a1a1a6; --line:#e3e2dd;
+          --ok:#2f7a55; --ok-bg:rgba(47,122,85,.10); --sel:#1d1d1f; --sel-ink:#fff; --warn:#9a6b00; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0b0f17; --card:rgba(255,255,255,.06); --ink:#f4f6fa; --mute:#a3a8b3; --faint:#6b7180;
+          --line:rgba(255,255,255,.12); --ok:#9fdcb9; --ok-bg:rgba(159,220,185,.12); --sel:#f4f6fa; --sel-ink:#0b0f17; --warn:#f0c56b; } }
+  * { box-sizing:border-box; }
+  [hidden] { display:none !important; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", "PingFang SC", "Apple SD Gothic Neo", "Hiragino Sans", "Noto Sans Arabic", sans-serif; -webkit-font-smoothing:antialiased; }
+  main { max-width:620px; margin:0 auto; padding:20px 16px 72px; }
+  .top { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:28px; }
+  .brand { font-weight:700; letter-spacing:-0.02em; font-size:19px; color:inherit; text-decoration:none; }
+  .langsel { font:inherit; font-size:14px; color:inherit; background:transparent; border:1px solid var(--line); border-radius:999px; padding:6px 10px; max-width:150px; }
+  .smsline { margin:10px 0 0; padding:10px 12px; border-radius:12px; font-size:14.5px; background:rgba(214,158,46,.14); }
+  .smsline.on { background:var(--ok-bg); color:var(--ok); }
+  .badge { display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color:var(--ok); background:var(--ok-bg); padding:4px 11px; border-radius:999px; margin-bottom:14px; }
+  .badge::before { content:""; width:8px; height:8px; border-radius:50%; background:var(--ok); }
+  h1 { font-size:40px; line-height:1.06; letter-spacing:-0.035em; margin:0 0 12px; font-weight:700; text-wrap:balance; }
+  :lang(ko) { word-break:keep-all; overflow-wrap:anywhere; }
+  [dir=rtl] h2 { text-transform:none; letter-spacing:0; }
+  .sub { color:var(--mute); margin:0 0 26px; font-size:17px; }
+  .card { background:var(--card); backdrop-filter:blur(20px); border:1px solid var(--line); border-radius:22px; padding:18px; margin-bottom:12px; }
+  h2 { font-size:13px; font-weight:600; color:var(--faint); text-transform:uppercase; letter-spacing:.08em; margin:0 0 12px; }
+  ol { list-style:none; margin:0; padding:0; counter-reset:n; }
+  ol li { counter-increment:n; display:grid; grid-template-columns:28px 1fr; gap:10px; }
+  ol li + li { margin-top:14px; }
+  ol li::before { content:counter(n); width:26px; height:26px; border-radius:50%; border:1px solid var(--line); display:grid; place-items:center; font-size:13px; font-weight:600; color:var(--mute); }
+  ol p, #share p { margin:0; } ol b { display:block; } ol span.d { color:var(--mute); font-size:15px; }
+  .note { color:var(--mute); font-size:15px; margin:14px 2px 0; }
+  .row { display:flex; gap:8px; margin-top:12px; }
+  .row input { flex:1; min-width:0; font:inherit; font-size:15px; color:inherit; background:transparent; border:1px solid var(--line); border-radius:12px; padding:11px 12px; }
+  .btn { font:inherit; border:0; border-radius:12px; padding:11px 16px; background:var(--sel); color:var(--sel-ink); font-weight:600; cursor:pointer; white-space:nowrap; }
+  .btn.ghost { background:transparent; color:var(--ink); border:1px solid var(--line); }
+  #shareMsg { min-height:20px; font-size:14px; color:var(--ok); margin-top:8px; }
+  .back { display:inline-block; margin-top:18px; color:var(--ink); font-weight:600; text-underline-offset:3px; }
+  .fine { color:var(--faint); font-size:12.5px; margin-top:18px; }
+  .fine a { color:var(--mute); }
+  .state { display:flex; align-items:center; gap:8px; font-weight:600; }
+  .state::before { content:""; width:9px; height:9px; border-radius:50%; background:var(--ok); box-shadow:0 0 0 4px var(--ok-bg); }
+  .state.wait::before { background:var(--warn); box-shadow:none; }
+  .state.off::before { background:var(--faint); box-shadow:none; }
+  .until { color:var(--mute); font-size:14px; margin-top:2px; }
+  .cells { margin:12px 0 0; padding:0; list-style:none; }
+  .cells li { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:7px 0; border-top:1px solid var(--line); font-size:14.5px; }
+  .pill { font-size:12.5px; font-weight:600; padding:2px 9px; border-radius:999px; white-space:nowrap; color:var(--mute); border:1px solid var(--line); }
+  .pill.in { color:var(--ok); background:var(--ok-bg); border-color:transparent; }
+  h3 { font-size:13px; color:var(--faint); margin:16px 0 6px; font-weight:600; }
+  .events { margin:0; padding:0; list-style:none; font-size:14px; }
+  .events li { display:grid; grid-template-columns:auto 1fr; gap:10px; padding:5px 0; }
+  .events time { color:var(--faint); font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .hint { color:var(--mute); font-size:13px; margin:12px 0 0; }
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <a class="brand" href="/">GetDuoNow</a>
+    <select id="langSel" class="langsel"></select>
+  </div>
+
+  <div class="badge" id="badge" hidden></div>
+  <h1 data-i18n="done.h1"></h1>
+  <p class="sub" data-i18n="done.sub"></p>
+
+  <section class="card" id="log" hidden>
+    <h2 data-i18n="done.logTitle"></h2>
+    <div class="state" id="state"></div>
+    <div class="until" id="until"></div>
+    <p class="smsline" id="smsLine" hidden></p>
+    <ul class="cells" id="cells"></ul>
+    <h3 data-i18n="done.events"></h3>
+    <ul class="events" id="events"></ul>
+    <p class="hint" data-i18n="done.logHint"></p>
+  </section>
+
+  <section class="card" id="share" hidden>
+    <h2 data-i18n="done.shareTitle"></h2>
+    <p data-i18n="done.shareP"></p>
+    <p class="note" id="shareBonus"></p>
+    <div class="row">
+      <input id="shareUrl" type="text" readonly aria-label="Share link">
+      <button class="btn" id="copy" type="button" data-i18n="done.copy"></button>
+      <button class="btn ghost" id="native" type="button" hidden data-i18n="done.share"></button>
+    </div>
+    <div id="shareMsg" aria-live="polite"></div>
+  </section>
+
+  <section class="card">
+    <h2 data-i18n="done.nextTitle"></h2>
+    <ol>
+      <li><p><b data-i18n="done.n1t"></b><span class="d" data-i18n="done.n1d"></span></p></li>
+      <li><p><b data-i18n="done.n2t"></b><span class="d" data-i18n="done.n2d"></span></p></li>
+      <li><p><b data-i18n="done.n3t"></b><span class="d" data-i18n="done.n3d"></span></p></li>
+    </ol>
+    <p class="note" id="note" data-i18n="done.note"></p>
+  </section>
+
+
+  <a class="back" href="/" data-i18n="done.back"></a>
+  <p class="fine"><span data-i18n="common.notAffiliated"></span> <a href="/terms" data-i18n="common.terms"></a></p>
+</main>
+<script>
+(() => {
+  const I18N = __I18N__, lang = I18N.lang, $ = (id) => document.getElementById(id);
+  const t = (k, v = {}) => (I18N.t[k] ?? k).replace(/\{(\w+)\}/g, (_, x) => v[x] ?? "");
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  document.title = t("done.title");
+  document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = t(el.dataset.i18n));
+  $("langSel").setAttribute("aria-label", t("common.language"));
+  $("langSel").innerHTML = Object.entries(I18N.langs).map(([k, n]) => `<option value="${k}"${k === lang ? " selected" : ""}>${n}</option>`).join("");
+  $("langSel").onchange = (e) => {
+    document.cookie = `gdn_lang=${e.target.value}; path=/; max-age=31536000; samesite=lax`;
+    const q = new URLSearchParams(location.search); q.set("lang", e.target.value); location.search = q.toString();
+  };
+
+  const qs = new URLSearchParams(location.search), sub = qs.get("sub"), sig = qs.get("sig");
+  if (!sub) return;
+  const loc = document.documentElement.lang + "-u-ca-gregory-nu-latn";      // same calendar + digits as the rest of the page
+  const when = (iso, dateOnly) => new Date(iso.endsWith("Z") || /[+-]\d\d:\d\d$/.test(iso) ? iso : iso + "Z")
+    .toLocaleString(loc, dateOnly ? { month: "short", day: "numeric" } : { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+  const short = (p) => (p || "").replace(/^iPhone Duo\s+/, "");
+  const EVENT = {
+    start: () => t("done.evStart"),
+    alert: (e) => t("done.evAlert", { store: e.store_name, product: short(e.product) }),
+    alert_fail: (e) => t("done.evAlertFail", { store: e.store_name, product: short(e.product) }),
+    restock: (e) => t("done.evRestock", { store: e.store_name, product: short(e.product), min: e.minutes }),
+  };
+  async function refresh() {
+    const r = await fetch(`/api/watch/${encodeURIComponent(sub)}/${encodeURIComponent(sig || "")}`);
+    if (!r.ok) return;
+    const w = await r.json();
+    $("log").hidden = false;
+    document.body.classList.toggle("paid", w.status === "active");
+    const active = w.status === "active", waitYes = active && w.checking === false;
+    $("state").className = "state" + (active && !waitYes ? "" : active || w.status === "pending" ? " wait" : " off");
+    $("state").textContent = waitYes ? t("done.logWaitYes") : active ? t("done.logActive", { s: w.last_check_s ?? "–" })
+      : t(w.status === "pending" ? "done.logPending" : "done.logEnded");
+    $("until").textContent = active && w.expires_at ? t("done.logUntil", { date: when(w.expires_at, true) }) : "";
+    $("badge").textContent = t(waitYes ? "done.badgeWaitYes" : active ? (w.paid ? "done.badgePaid" : "done.badge")
+      : w.status === "pending" ? "done.badgePending" : "done.logEnded");
+    $("badge").hidden = false;
+    if (active) $("note").textContent = t("done.noteActive");
+    $("smsLine").hidden = !(active && w.sms);   // text alerts start only after the customer replies YES
+    if (active && w.sms) {
+      $("smsLine").className = "smsline" + (w.sms.state === "on" ? " on" : "");
+      $("smsLine").textContent = t(w.sms.state === "on" ? "done.smsOn" : "done.smsWaiting", { last4: w.sms.last4 });
+    }
+    $("cells").innerHTML = w.cells.map(c => `<li><span>${esc(c.store_name)} · ${esc(short(c.product))}</span>
+      <span class="pill ${c.available ? "in" : ""}">${esc(t(c.available ? "done.statusIn" : "done.statusOut"))}</span></li>`).join("");
+    const evs = w.events.filter(e => EVENT[e.kind]);
+    $("events").innerHTML = evs.map(e => `<li><time>${esc(when(e.at))}</time><span>${esc(EVENT[e.kind](e))}</span></li>`).join("")
+      + (evs.some(e => e.kind !== "start") ? "" : `<li><time></time><span>${esc(t("done.evNone"))}</span></li>`);
+    return w.status;
+  }
+  async function loop() {   // 2 s until the payment confirms, 4 s until the YES text arrives, then 15 s
+    let status = "";
+    try { status = await refresh(); } catch (e) {}
+    const waitingYes = !$("smsLine").hidden && !$("smsLine").classList.contains("on");
+    setTimeout(loop, status === "pending" ? 2000 : waitingYes ? 4000 : 15000);
+  }
+  if (sig) loop();
+
+  fetch("/api/referral/link?sub=" + encodeURIComponent(sub))
+    .then(r => r.status === 200 ? r.json() : null)
+    .then(b => {
+      const url = b && typeof b.url === "string" ? b.url : "";
+      if (!/^https?:\/\//i.test(url)) return;
+      $("shareUrl").value = url;
+      $("shareBonus").textContent = t("done.shareBonus", { days: b.reward_days || 7 });
+      $("share").hidden = false;
+      $("shareUrl").onfocus = () => $("shareUrl").select();
+      $("copy").onclick = async () => {
+        try { await navigator.clipboard.writeText(url); $("shareMsg").textContent = t("done.copied"); }
+        catch (e) { $("shareUrl").focus(); $("shareUrl").select(); $("shareMsg").textContent = t("done.copyFail"); }
+      };
+      if (navigator.share) {
+        $("native").hidden = false;
+        $("native").onclick = () => navigator.share({ title: "GetDuoNow", text: t("done.shareText"), url }).catch(() => {});
+      }
+    })
+    .catch(() => {});
+})();
+</script>
+</body>
+</html>

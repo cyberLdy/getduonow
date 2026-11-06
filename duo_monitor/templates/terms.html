@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="__LANG__" dir="__DIR__">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GetDuoNow · Terms &amp; refunds</title>
+<meta name="description" content="GetDuoNow terms, refund promise, SMS terms and privacy.">
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<style>
+  :root { --bg:#f5f5f2; --card:rgba(255,255,255,.78); --ink:#1d1d1f; --mute:#6e6e73; --faint:#a1a1a6; --line:#e3e2dd;
+          --ok:#2f7a55; --ok-bg:rgba(47,122,85,.10); --sel:#1d1d1f; --sel-ink:#fff; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0b0f17; --card:rgba(255,255,255,.06); --ink:#f4f6fa; --mute:#a3a8b3; --faint:#6b7180;
+          --line:rgba(255,255,255,.12); --ok:#9fdcb9; --ok-bg:rgba(159,220,185,.12); --sel:#f4f6fa; --sel-ink:#0b0f17; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", "PingFang SC", "Apple SD Gothic Neo", "Hiragino Sans", "Noto Sans Arabic", sans-serif; -webkit-font-smoothing:antialiased; }
+  main { max-width:620px; margin:0 auto; padding:20px 16px 72px; }
+  .top { display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; }
+  .brand { font-weight:700; letter-spacing:-0.02em; font-size:19px; color:inherit; text-decoration:none; }
+  .langsel { font:inherit; font-size:14px; color:inherit; background:transparent; border:1px solid var(--line); border-radius:999px; padding:6px 10px; max-width:150px; }
+  h1 { font-size:34px; line-height:1.08; letter-spacing:-0.03em; margin:0 0 10px; font-weight:700; }
+  .sub { color:var(--mute); margin:0 0 24px; font-size:16px; }
+  .card { background:var(--card); backdrop-filter:blur(20px); border:1px solid var(--line); border-radius:22px; padding:18px; margin-bottom:12px; }
+  .card.hl { border-color:var(--ok); background:var(--ok-bg); }
+  :lang(ko) { word-break:keep-all; overflow-wrap:anywhere; }
+  [dir=rtl] h2 { text-transform:none; letter-spacing:0; }
+  h2 { font-size:13px; font-weight:600; color:var(--faint); text-transform:uppercase; letter-spacing:.08em; margin:0 0 8px; }
+  .card.hl h2 { color:var(--ok); }
+  p { margin:0; } p + p, p + ul, ul + p { margin-top:8px; } .en + .zh { margin-top:0; }
+  ul { margin:0; padding-inline-start:20px; } li + li { margin-top:4px; }
+  .fine { color:var(--faint); font-size:12.5px; margin-top:18px; }
+  a { color:var(--ink); text-underline-offset:3px; }
+  .fine a { color:var(--mute); }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <a class="brand" href="/">GetDuoNow</a>
+    <select id="langSel" class="langsel"></select>
+  </div>
+
+  <h1 data-i18n="terms.h1"></h1>
+  <p class="sub" data-i18n="terms.sub"></p>
+  <p class="fine" id="note" hidden data-i18n="terms.translationNote"></p>
+
+  <section class="card"><h2 data-i18n="terms.whatH"></h2><p data-i18n="terms.whatP"></p></section>
+  <section class="card"><h2 data-i18n="terms.appleH"></h2><p data-i18n="terms.appleP"></p></section>
+  <section class="card"><h2 data-i18n="terms.priceH"></h2><p id="price"></p></section>
+  <section class="card hl"><h2 data-i18n="terms.refundH"></h2><p data-i18n="terms.refundP"></p></section>
+  <section class="card" id="sms"><h2 data-i18n="terms.smsH"></h2>
+    <ul><li data-i18n="terms.sms1"></li><li data-i18n="terms.sms2"></li><li data-i18n="terms.sms3"></li><li data-i18n="terms.sms4"></li></ul></section>
+  <section class="card" id="privacy"><h2 data-i18n="terms.privacyH"></h2><p data-i18n="terms.privacyP"></p></section>
+  <section class="card"><h2 data-i18n="terms.contactH"></h2><p id="contact"></p></section>
+
+  <p class="fine"><a href="/" data-i18n="terms.back"></a> · <span data-i18n="terms.updated"></span></p>
+</main>
+<script>
+(() => {
+  const I18N = __I18N__, lang = I18N.lang, $ = (id) => document.getElementById(id);
+  const t = (k, v = {}) => (I18N.t[k] ?? k).replace(/\{(\w+)\}/g, (_, x) => v[x] ?? "");
+  document.title = t("terms.title");
+  document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = t(el.dataset.i18n));
+  $("note").hidden = lang === "en";
+  $("langSel").setAttribute("aria-label", t("common.language"));
+  $("langSel").innerHTML = Object.entries(I18N.langs).map(([k, n]) => `<option value="${k}"${k === lang ? " selected" : ""}>${n}</option>`).join("");
+  $("langSel").onchange = (e) => {
+    document.cookie = `gdn_lang=${e.target.value}; path=/; max-age=31536000; samesite=lax`;
+    const q = new URLSearchParams(location.search); q.set("lang", e.target.value); location.search = q.toString() + location.hash;
+  };
+  fetch("/api/config").then(r => r.ok ? r.json() : null).then(cfg => {
+    if (!cfg) return;
+    const days = Number(cfg.watch_days) || 14, cents = Number(cfg.price_cents);
+    $("contact").textContent = t("terms.contactP", { email: cfg.support_email || "support@solescout.ai" });
+    $("price").textContent = cfg.payments && cents > 0 ? t("terms.priceP", { price: "\u2066$" + (cents / 100).toFixed(2) + "\u2069", days })
+      : t("terms.priceFree", { days });
+  }).catch(() => {});
+})();
+</script>
+</body>
+</html>

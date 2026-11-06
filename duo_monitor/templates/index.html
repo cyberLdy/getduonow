@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="__LANG__" dir="__DIR__">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0f17">
+<title>GetDuoNow · Hands-free iPhone restock alerts</title>
+<meta name="description" content="We check Apple Store pickup stock every 30 seconds and text + email you the moment your iPhone is available.">
+<meta property="og:title" content="GetDuoNow · Hands-free restock alerts">
+<meta property="og:description" content="解放双手，有货秒通知 — Apple Store pickup alerts, checked every 30 seconds.">
+<meta property="og:image" content="__BASE__/static/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="__BASE__/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+<style>
+  :root { --bg:#f5f5f2; --card:rgba(255,255,255,.78); --ink:#1d1d1f; --mute:#6e6e73; --faint:#a1a1a6; --line:#e3e2dd;
+          --accent:#1d1d1f; --ok:#2f7a55; --ok-bg:rgba(47,122,85,.10); --sel:#1d1d1f; --sel-ink:#fff; --err:#b3261e; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0b0f17; --card:rgba(255,255,255,.06); --ink:#f4f6fa; --mute:#a3a8b3; --faint:#6b7180;
+          --line:rgba(255,255,255,.12); --accent:#f4f6fa; --ok:#9fdcb9; --ok-bg:rgba(159,220,185,.12); --sel:#f4f6fa; --sel-ink:#0b0f17; --err:#ff8a80; } }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  button, a, label, summary { touch-action:manipulation; }
+  html { -webkit-text-size-adjust:100%; }
+  [hidden] { display:none !important; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", "PingFang SC", "Apple SD Gothic Neo", "Hiragino Sans", "Noto Sans Arabic", sans-serif; -webkit-font-smoothing:antialiased; }
+  main { max-width:620px; margin:0 auto; padding:max(20px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 120px max(16px, env(safe-area-inset-left)); }
+  .top { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:28px; }
+  .brand { font-weight:700; letter-spacing:-0.02em; font-size:19px; }
+  .langsel { font:inherit; font-size:14px; color:inherit; background:transparent; border:1px solid var(--line); border-radius:999px; padding:6px 10px; max-width:150px; }
+  h1 { font-size:40px; line-height:1.08; letter-spacing:-0.035em; margin:0 0 12px; font-weight:700; text-wrap:balance; }
+  :lang(ko) { word-break:keep-all; overflow-wrap:anywhere; }
+  [dir=rtl] .step { text-transform:none; letter-spacing:0; }
+  .sub { color:var(--mute); margin:0 0 26px; font-size:17px; }
+  .card { background:var(--card); backdrop-filter:blur(20px); border:1px solid var(--line); border-radius:22px; padding:18px; margin-bottom:12px; }
+  .step { font-size:13px; font-weight:600; color:var(--faint); text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px; }
+  .hint { color:var(--mute); font-size:14px; margin:0 0 12px; }
+  .hint.small { font-size:12.5px; margin:8px 0 0; }
+  .label { font-size:13px; color:var(--mute); font-weight:600; margin:14px 0 8px; }
+  input[type=email], input[type=tel], input[type=text] { width:100%; font:inherit; color:inherit; background:transparent; border:1px solid var(--line); border-radius:12px; padding:12px 13px; }
+  input:focus, button:focus-visible, select:focus-visible { outline:2px solid var(--ok); outline-offset:-1px; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; } .row input { flex:1 1 200px; min-width:0; } .row .btn { flex:1 0 auto; }
+  .stack > * + * { margin-top:10px; }
+  .optin { display:flex; gap:10px; align-items:flex-start; color:var(--mute); font-size:14.5px; cursor:pointer; }
+  .optin input { width:22px; height:22px; margin:1px 0 0; accent-color:var(--ok); flex:none; }
+  .optin.on { color:var(--ink); }
+  #phone { font-size:18px; padding:14px; letter-spacing:.02em; }
+  button { font:inherit; }
+  .btn { border:0; border-radius:12px; padding:12px 16px; background:var(--sel); color:var(--sel-ink); font-weight:600; cursor:pointer; white-space:nowrap; }
+  .btn:disabled { opacity:.35; cursor:default; }
+  .chips { display:flex; gap:8px; flex-wrap:wrap; }
+  .chip { border:1px solid var(--line); border-radius:999px; padding:8px 14px; cursor:pointer; background:transparent; color:inherit; font-weight:500; }
+  .chip small { font-weight:400; opacity:.7; }
+  .chip.on { background:var(--sel); color:var(--sel-ink); border-color:var(--sel); }
+  .colors { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .color { border:1px solid var(--line); border-radius:16px; padding:8px 8px 10px; background:transparent; color:inherit; cursor:pointer;
+           display:flex; flex-direction:column; align-items:center; gap:4px; font-weight:500; }
+  .color img { width:100%; height:auto; display:block; }
+  .color.on { border-color:var(--sel); box-shadow:inset 0 0 0 1px var(--sel); }
+  .color.on span::before { content:"✓ "; }
+  .count { margin-top:12px; font-size:13.5px; color:var(--ok); font-weight:600; min-height:20px; }
+  .store { width:100%; display:flex; gap:12px; align-items:flex-start; text-align:start; border:1px solid var(--line); border-radius:16px;
+           padding:12px; margin-top:10px; background:transparent; color:inherit; cursor:pointer; }
+  .store.on { border-color:var(--sel); box-shadow:inset 0 0 0 1px var(--sel); }
+  .check { width:22px; height:22px; border-radius:50%; border:1.5px solid var(--line); display:grid; place-items:center; flex:none; font-size:13px; margin-top:1px; }
+  .store.on .check { background:var(--sel); color:var(--sel-ink); border-color:var(--sel); }
+  .sinfo { display:flex; flex-direction:column; gap:2px; }
+  .sinfo small { color:var(--mute); }
+  .live { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--ok); background:var(--ok-bg); padding:3px 9px; border-radius:999px; margin-top:4px; align-self:flex-start; }
+  .live::before, .cell .dotok { content:""; width:7px; height:7px; border-radius:50%; background:var(--ok); display:inline-block; }
+  details.adv summary { cursor:pointer; list-style:none; }
+  details.adv summary::-webkit-details-marker { display:none; }
+  details.adv summary .sumtxt { display:flex; justify-content:space-between; gap:8px; font-weight:600; }
+  details.adv summary .sumtxt::after { content:"＋"; color:var(--mute); }
+  details.adv[open] summary .sumtxt::after { content:"－"; }
+  details.adv[open] summary { margin-bottom:10px; }
+  .store-adv { border-top:1px solid var(--line); padding-top:12px; margin-top:12px; }
+  .store-adv .head { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:4px; }
+  .tag { font-size:12px; color:var(--ok); background:var(--ok-bg); padding:2px 8px; border-radius:999px; }
+  .linkbtn { background:none; border:0; padding:0; color:var(--mute); text-decoration:underline; text-underline-offset:3px; cursor:pointer; font-size:13px; }
+  .size-row { display:grid; grid-template-columns:62px 1fr; gap:8px; align-items:start; margin-top:6px; }
+  .size-row .size { color:var(--mute); font-size:14px; padding-top:8px; }
+  .cells { display:flex; flex-wrap:wrap; gap:6px; }
+  .cell { border:1px solid var(--line); border-radius:10px; padding:7px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:7px; font-size:14px; background:transparent; color:inherit; }
+  .cell.on { background:var(--sel); color:var(--sel-ink); border-color:var(--sel); }
+  .cell.on::before { content:"✓"; font-weight:700; }
+  .cell.on .sw { box-shadow:0 0 0 1.5px var(--sel-ink); }
+  .cell.instock:not(.on) { border-color:var(--ok); }
+  .sw { width:12px; height:12px; border-radius:50%; border:1px solid rgba(128,128,128,.6); flex:none; }
+  .summary { margin-top:12px; padding:12px 14px; border-radius:14px; background:var(--ok-bg); font-size:14.5px; }
+  .summary ul { margin:6px 0 0; padding-inline-start:18px; color:var(--mute); font-size:13.5px; }
+  #msg { min-height:22px; margin:10px 2px 0; font-size:15px; } .err { color:var(--err); }
+  #submit { width:100%; padding:15px; font-size:17px; border-radius:14px; margin-top:6px; }
+  .fine { color:var(--faint); font-size:12.5px; margin-top:14px; line-height:1.55; }
+  .fine a { color:var(--mute); }
+  .promise { display:flex; gap:10px; margin:0 0 18px; flex-wrap:wrap; }
+  .promise span { font-size:13px; color:var(--mute); border:1px solid var(--line); border-radius:999px; padding:5px 11px; }
+  .hero-img { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:0 0 20px; }
+  .hero-img figure { margin:0; text-align:center; cursor:pointer; }
+  .hero-img img { width:100%; height:auto; display:block; }
+  .hero-img figcaption { font-size:13px; color:var(--mute); margin-top:2px; }
+  .hero .hero-img { margin:0 0 16px; } .hero .hero-img figcaption { color:rgba(232,236,244,.6); }
+  .how ol { list-style:none; counter-reset:s; margin:0; padding:0; }
+  .how li { counter-increment:s; display:grid; grid-template-columns:30px 1fr; gap:8px; padding:6px 0; }
+  .how li::before { content:counter(s); width:24px; height:24px; border-radius:50%; background:var(--sel); color:var(--sel-ink);
+                    font-size:13px; font-weight:600; display:grid; place-items:center; margin-top:1px; }
+  #refBanner { margin:0 0 16px; color:var(--ok); font-weight:600; }
+  .hero { margin:-20px -16px 18px; padding:20px 16px 24px; color:#f4f6fa; border-radius:0 0 28px 28px;
+          background:radial-gradient(700px 480px at 88% 0%, rgba(214,222,236,.18), transparent 70%),
+                     radial-gradient(620px 520px at 0% 100%, rgba(74,104,150,.32), transparent 70%),
+                     linear-gradient(172deg, #142033 0%, #0a111d 55%, #04070c 100%); }
+  @media (min-width:652px) { .hero { margin:0 0 18px; border-radius:28px; padding:24px 22px 26px; } }
+  .hero .top { margin-bottom:22px; } .hero .brand { color:#fff; }
+  .hero .langsel { color:#f4f6fa; border-color:rgba(255,255,255,.25); } .hero .langsel option { color:#1d1d1f; }
+  .hero h1 { color:#fff; font-size:44px; } .hero .sub { color:rgba(232,236,244,.72); margin-bottom:20px; }
+  .notif { display:grid; grid-template-columns:42px 1fr; gap:12px; padding:14px; border-radius:22px; text-align:start;
+           background:linear-gradient(180deg, rgba(255,255,255,.13), rgba(255,255,255,.05)); border:1px solid rgba(255,255,255,.18);
+           box-shadow:inset 0 1px 0 rgba(255,255,255,.35), 0 18px 50px rgba(0,0,0,.45); backdrop-filter:blur(30px); }
+  .notif .app { width:42px; height:42px; border-radius:11px; display:grid; place-items:center; font-weight:700; font-size:21px; color:#fff;
+                background:linear-gradient(165deg, #2a3a55, #0f1828); box-shadow:inset 0 1px 0 rgba(255,255,255,.35); }
+  .notif .r1 { display:flex; justify-content:space-between; gap:8px; font-size:14px; color:rgba(232,236,244,.7); }
+  .notif .r1 b { color:#fff; font-weight:600; }
+  .notif .ttl { font-weight:700; font-size:17px; color:#fff; margin-top:1px; }
+  .notif .bd { font-size:15px; color:rgba(232,236,244,.75); }
+  .notif .pill { display:inline-flex; align-items:center; gap:6px; margin-top:6px; font-size:12.5px; font-weight:600; color:#9fdcb9;
+                 background:rgba(159,220,185,.13); padding:3px 9px; border-radius:999px; }
+  .notif .pill::before { content:""; width:7px; height:7px; border-radius:50%; background:#9fdcb9; }
+  .realline { margin-top:10px; font-size:13px; color:rgba(232,236,244,.65); display:flex; flex-wrap:wrap; gap:4px 12px; }
+  .realline b { color:#9fdcb9; font-weight:600; }
+  .zip { display:flex; gap:8px; margin-top:18px; }
+  .zip input { flex:1; min-width:0; font:inherit; font-size:17px; color:#fff; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.22);
+               border-radius:14px; padding:14px; } .zip input::placeholder { color:rgba(232,236,244,.5); }
+  .zip button { border:0; border-radius:14px; padding:0 20px; background:#9fdcb9; color:#0b0f17; font:inherit; font-weight:700; cursor:pointer; }
+  .near { margin-top:10px; font-size:14px; color:#9fdcb9; min-height:20px; }
+  .hero .cta { margin-top:18px; width:100%; background:#f4f6fa; color:#0b0f17; border:0; border-radius:14px; padding:15px; font-size:17px; font-weight:700; cursor:pointer; }
+  .pulse { display:flex; align-items:center; gap:8px; margin-top:12px; font-size:13px; color:rgba(232,236,244,.75); }
+  .pulse::before { content:""; width:8px; height:8px; border-radius:50%; background:#9fdcb9; box-shadow:0 0 0 0 rgba(159,220,185,.6); animation:beat 2s infinite; }
+  @keyframes beat { 0% { box-shadow:0 0 0 0 rgba(159,220,185,.55); } 70% { box-shadow:0 0 0 9px rgba(159,220,185,0); } 100% { box-shadow:0 0 0 0 rgba(159,220,185,0); } }
+  .proof { margin:0 0 18px; }
+  .proof .head { display:flex; justify-content:space-between; align-items:baseline; margin:0 2px 8px; }
+  .proof .head b { font-size:13px; font-weight:600; color:var(--faint); text-transform:uppercase; letter-spacing:.08em; }
+  .proof .head a { font-size:13px; color:var(--mute); }
+  .strip { display:flex; gap:10px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:4px; }
+  .strip figure { margin:0; flex:0 0 46%; scroll-snap-align:start; }
+  .strip img { width:100%; aspect-ratio:3/4; object-fit:contain; object-position:top; background:#fff; border-radius:16px; border:1px solid var(--line); display:block; }
+  .strip figcaption { font-size:12.5px; color:var(--mute); margin-top:4px; }
+  [dir=rtl] .proof .head b { text-transform:none; letter-spacing:0; }
+  .blur { filter:blur(4px); user-select:none; }
+  .recent { list-style:none; margin:4px 0 0; padding:0; }
+  .recent li { display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; padding:8px 0; border-top:1px solid var(--line); font-size:14.5px; }
+  .recent li:first-child { border-top:0; }
+  .recent time { color:var(--faint); font-variant-numeric:tabular-nums; white-space:nowrap; font-size:13px; }
+  .recent .dur { font-size:12.5px; font-weight:600; color:var(--ok); background:var(--ok-bg); padding:2px 8px; border-radius:999px; white-space:nowrap; }
+  .sticky { position:fixed; inset-inline:0; bottom:0; z-index:10; display:flex; align-items:center; justify-content:space-between; gap:12px;
+            padding:10px 16px calc(10px + env(safe-area-inset-bottom)); background:var(--bg); border-top:1px solid var(--line); }
+  .sticky span { font-size:14px; color:var(--mute); }
+  .sticky .btn { padding:11px 20px; }
+  #oneTime { text-align:center; color:var(--mute); font-size:13px; margin:8px 0 0; }
+  .tip { margin-top:10px; font-size:14px; color:var(--mute); background:var(--ok-bg); border-radius:12px; padding:10px 12px; }
+</style>
+</head>
+<body>
+<main>
+  <header class="hero">
+    <div class="top">
+      <div class="brand">GetDuoNow</div>
+      <select id="langSel" class="langsel"></select>
+    </div>
+    <h1 data-i18n="web.h1"></h1>
+    <p class="sub" id="sub"></p>
+    <div class="hero-img">
+      <figure data-color="Night Sky"><img src="/static/duo-night-sky.webp" alt="iPhone Duo in Night Sky" width="560" height="365"><figcaption>Night Sky</figcaption></figure>
+      <figure data-color="Star White"><img src="/static/duo-star-white.webp" alt="iPhone Duo in Star White" width="560" height="365"><figcaption>Star White</figcaption></figure>
+    </div>
+    <div class="notif" id="notif" hidden>
+      <div class="app">G</div>
+      <div><div class="r1"><b>GetDuoNow</b><time id="nWhen"></time></div>
+        <div class="ttl" id="nTitle"></div><div class="bd" id="nBody"></div>
+        <span class="pill" data-i18n="web.availableToday"></span></div>
+    </div>
+    <div class="realline" id="realLine" hidden></div>
+    <div class="pulse" id="pulse" hidden></div>
+    <form class="zip" id="zipForm"><input id="heroZip" inputmode="numeric" autocomplete="postal-code" maxlength="10"><button type="submit" data-i18n="web.heroZipBtn"></button></form>
+    <div class="near" id="near" aria-live="polite"></div>
+    <button class="cta" id="heroCta" type="button" data-i18n="web.heroCta"></button>
+  </header>
+
+  <section class="proof" id="proof" hidden>
+    <div class="head"><b data-i18n="web.proofTitle"></b><a id="proofAll" data-i18n="web.seeAll"></a></div>
+    <div class="strip" id="strip"></div>
+  </section>
+  <div class="promise"><span id="pPrice" hidden></span><span data-i18n="web.p1"></span><span id="p2"></span><span data-i18n="web.p3"></span></div>
+  <div class="tip" id="refBanner" hidden></div>
+  <section class="card how" id="how">
+    <div class="step" data-i18n="web.howTitle"></div>
+    <ol><li id="how1"></li><li data-i18n="web.how2"></li><li id="how3"></li><li data-i18n="web.how4"></li></ol>
+    <div class="tip" data-i18n="web.howTip"></div>
+  </section>
+
+  <section class="card" id="recent" hidden>
+    <div class="step" data-i18n="web.recentTitle"></div>
+    <p class="hint" data-i18n="web.recentHint"></p>
+    <ul class="recent" id="recentList"></ul>
+  </section>
+
+  <section class="card" id="famCard" hidden>
+    <div class="step" data-i18n="web.family"></div>
+    <div class="chips" id="families"></div>
+  </section>
+
+  <section class="card" id="step1">
+    <div class="step" data-i18n="web.s1"></div>
+    <p class="hint" data-i18n="web.s1hint"></p>
+    <div class="label" data-i18n="web.color"></div>
+    <div class="colors" id="colors"></div>
+    <div class="label" data-i18n="web.storage"></div>
+    <div class="chips" id="sizes"></div>
+    <div class="label" data-i18n="web.version"></div>
+    <div class="chips" id="carriers"></div>
+    <p class="hint small" data-i18n="web.versionHint"></p>
+    <div class="count" id="pickedCount"></div>
+  </section>
+
+  <section class="card" id="step2">
+    <div class="step" data-i18n="web.s2"></div>
+    <p class="hint" id="s2hint"></p>
+    <div class="row"><input type="text" id="loc" inputmode="text" autocomplete="postal-code"><button class="btn" id="find" type="button" data-i18n="web.find"></button></div>
+    <div class="count" id="storesCount"></div>
+    <div id="stores"></div>
+    <button type="button" class="linkbtn" id="moreStores" hidden style="margin-top:10px"></button>
+  </section>
+
+  <details class="card adv" id="step3">
+    <summary><div class="step" data-i18n="web.s3"></div><div class="sumtxt"><span data-i18n="web.s3summary"></span></div></summary>
+    <p class="hint" data-i18n="web.s3hint"></p>
+    <div id="adv"></div>
+  </details>
+
+  <section class="card stack" id="step4">
+    <div class="step" data-i18n="web.s4"></div>
+    <p class="hint" id="s4hint" data-i18n="web.s4hint" hidden></p>
+    <input type="tel" id="phone" autocomplete="tel" inputmode="tel" hidden>
+    <label class="optin" id="optin" hidden><input type="checkbox" id="smsOpt"><span data-i18n="web.smsOpt"></span></label>
+    <p class="fine" id="smsTerms" hidden><span data-i18n="web.smsTerms"></span> <a href="/terms#sms" data-i18n="web.smsLink"></a></p>
+    <input type="email" id="email" autocomplete="email" autocapitalize="off" autocorrect="off" spellcheck="false">
+    <div class="summary" id="summary"></div>
+  </section>
+
+  <button class="btn" id="submit" type="button"></button>
+  <p id="oneTime" hidden></p>
+  <div id="msg" aria-live="polite"></div>
+  <p class="fine"><span data-i18n="web.consent"></span> <a href="/terms" data-i18n="common.terms"></a> · <a id="contactLink" data-i18n="common.contact"></a><span id="storiesWrap" hidden> · <a href="/stories" id="storiesLink" data-i18n="web.storiesLink"></a></span></p>
+  <div class="sticky" id="sticky" hidden><span id="stickyPrice"></span><button class="btn" id="stickyGo" type="button"></button></div>
+</main>
+<script>
+const I18N = __I18N__, lang = I18N.lang;
+const t = (k, v = {}) => {                     // "<key>.one" is the singular form, where a language has one
+  const key = v.n === 1 && I18N.t[k + ".one"] !== undefined ? k + ".one" : k;
+  return (I18N.t[key] ?? k).replace(/\{(\w+)\}/g, (_, x) => v[x] ?? "");
+};
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const PHOTO = { "Star White": "/static/duo-star-white.webp", "Night Sky": "/static/duo-night-sky.webp" };
+const SWATCH = { "Star White": "#f1efe8", "Night Sky": "#1f2a44", "Black": "#1d1d1f", "White": "#f5f5f0" };
+let cfg = {}, catalog = [], family = "", carrier = "unlocked";
+const colors = new Set(), sizes = new Set();
+const chosen = [], known = {}, custom = {};   // chosen store numbers · every store seen · step-3 overrides (store → parts)
+let found = [], showAll = false, bonus = 0;    // latest store search · show beyond the nearest 6 · invite +days
+let ref = new URLSearchParams(location.search).get("r") || "";
+try { if (ref) localStorage.setItem("gdn_ref", ref); else ref = localStorage.getItem("gdn_ref") || ""; } catch (e) {}
+
+$("langSel").setAttribute("aria-label", t("common.language"));
+$("langSel").innerHTML = Object.entries(I18N.langs).map(([k, n]) => `<option value="${k}"${k === lang ? " selected" : ""}>${n}</option>`).join("");
+$("langSel").onchange = (e) => {
+  const l = e.target.value;
+  document.cookie = `gdn_lang=${l}; path=/; max-age=31536000; samesite=lax`;
+  const q = new URLSearchParams(location.search); q.set("lang", l); location.search = q.toString();
+};
+
+const say = (m, c) => { $("msg").textContent = m || ""; $("msg").className = c || ""; };
+const products = () => catalog.filter(p => p.family === family);
+const short = (p) => `${p.size} ${p.color}`;
+const picked = () => new Set(products().filter(p => colors.has(p.color) && sizes.has(p.size)).map(p => p.part));
+const partsFor = (st) => custom[st] || picked();
+const watches = () => chosen.map(st => ({ store: st, store_name: (known[st] || {}).name || st, parts: [...partsFor(st)] }));
+const iso = (s) => "\u2068" + s + "\u2069";   // bidi isolate: "$4.99", "1.13 mi" and city names keep their order in RTL
+const price = (n) => "\u2066$" + Number(n).toLocaleString("en-US", { maximumFractionDigits: 2 }) + "\u2069";
+const days = () => (cfg.watch_days || 14) + bonus;
+const maxStores = () => cfg.max_stores || 12;
+const priceTag = () => t("web.pPrice", { price: price((cfg.price_cents || 0) / 100), days: days() });
+
+function fill() {
+  document.title = t("web.title");
+  document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = t(el.dataset.i18n));
+  const sms = cfg.sms !== false;            // texts only from a business number; until then the copy promises email only
+  $("sub").textContent = t(sms ? "web.sub" : "web.subEmail");
+  $("p2").textContent = t(sms ? "web.p2" : "web.p2Email");
+  $("how3").textContent = t(sms ? "web.how3" : "web.how3Email");
+  $("how1").textContent = t("web.how1", { max: maxStores() });
+  $("loc").placeholder = t("web.loc"); $("heroZip").placeholder = t("web.heroZip"); $("email").placeholder = t(cfg.sms_signup === true ? "web.email" : "web.emailPlain"); $("phone").placeholder = t("web.phone");
+  $("s2hint").textContent = t("web.s2hint", { max: maxStores() });
+  // Texts are the primary channel, email the backup. The number is always shown; consent stays its own unticked box.
+  $("optin").hidden = $("smsTerms").hidden = $("phone").hidden = $("s4hint").hidden = cfg.sms_signup !== true;
+  $("storiesLink").href = "/stories?lang=" + encodeURIComponent(lang);
+  if (cfg.support_email) $("contactLink").href = "mailto:" + cfg.support_email;
+  $("pPrice").hidden = $("oneTime").hidden = !cfg.payments;
+  if (cfg.payments) { $("pPrice").textContent = $("stickyPrice").textContent = priceTag(); $("oneTime").textContent = t("web.oneTime", { email: cfg.support_email || "" }); }
+  $("stickyGo").textContent = t("web.stickyGo");
+  if (typeof updateSticky === "function") updateSticky();
+}
+
+function renderFamilies() {
+  const fams = [...new Map(catalog.map(p => [p.family, p.family_name])).entries()];
+  $("famCard").hidden = fams.length < 2;
+  $("families").innerHTML = fams.map(([f, n]) => `<button type="button" class="chip ${f === family ? "on" : ""}" data-f="${esc(f)}">${esc(n)}</button>`).join("");
+}
+$("families").onclick = (e) => {
+  const f = e.target.closest("[data-f]")?.dataset.f;
+  if (f && f !== family) { family = f; colors.clear(); sizes.clear(); Object.keys(custom).forEach(k => delete custom[k]); renderFamilies(); render(); }
+};
+
+function renderStep1() {
+  const ps = products(), cs = [...new Set(ps.map(p => p.color))], ss = [...new Set(ps.map(p => p.size))];
+  $("colors").innerHTML = cs.map(c => `<button type="button" class="color ${colors.has(c) ? "on" : ""}" data-color="${esc(c)}" aria-pressed="${colors.has(c)}">
+      ${PHOTO[c] ? `<img src="${PHOTO[c]}" alt="" width="560" height="365">` : `<span class="sw" style="width:36px;height:36px;background:${SWATCH[c] || "#999"}"></span>`}
+      <span>${esc(c)}</span></button>`).join("");
+  $("sizes").innerHTML = ss.map(sz => {
+    const pr = Math.min(...ps.filter(p => p.size === sz).map(p => p.price || Infinity));
+    return `<button type="button" class="chip ${sizes.has(sz) ? "on" : ""}" data-size="${esc(sz)}" aria-pressed="${sizes.has(sz)}">${esc(sz)}${isFinite(pr) ? `<small> · ${price(pr)}</small>` : ""}</button>`;
+  }).join("");
+  $("carriers").innerHTML = Object.keys(cfg.carriers || {}).map(k =>
+    `<button type="button" class="chip ${k === carrier ? "on" : ""}" data-c="${k}">${esc(t("web.carrier." + k))}</button>`).join("");
+  const n = picked().size;
+  $("pickedCount").textContent = n ? t("web.picked", { n }) : "";
+}
+$("colors").onclick = (e) => { const c = e.target.closest("[data-color]")?.dataset.color; if (c) { colors.has(c) ? colors.delete(c) : colors.add(c); say(""); render(); } };
+$("sizes").onclick = (e) => { const z = e.target.closest("[data-size]")?.dataset.size; if (z) { sizes.has(z) ? sizes.delete(z) : sizes.add(z); say(""); render(); } };
+$("carriers").onclick = (e) => { const c = e.target.closest("[data-c]")?.dataset.c; if (c) { carrier = c; renderStep1(); } };
+
+function storeCard(s) {
+  const on = chosen.includes(s.number);
+  const live = [...partsFor(s.number)].filter(p => s.stock && s.stock[p]).length;
+  return `<button type="button" class="store ${on ? "on" : ""}" data-pick="${esc(s.number)}" aria-pressed="${on}">
+    <span class="check">${on ? "✓" : ""}</span>
+    <span class="sinfo"><b>${esc(s.name)}</b><small>${iso(esc(s.city) + (s.state ? ", " + esc(s.state) : ""))}${s.miles != null ? " · " + iso(t("web.miles", { n: s.miles })) : ""}</small>
+      ${live ? `<span class="live">${t("web.live", { n: live })}</span>` : ""}</span></button>`;
+}
+function renderStores() {
+  const NEAREST = 6, shown = showAll ? found : found.slice(0, NEAREST);
+  const list = [...chosen.filter(st => !shown.some(s => s.number === st)).map(st => known[st]), ...shown].filter(Boolean);
+  $("stores").innerHTML = list.map(storeCard).join("");
+  const rest = found.length - shown.length;
+  $("moreStores").hidden = rest <= 0;
+  if (rest > 0) $("moreStores").textContent = t("web.moreStores", { n: rest });
+  $("storesCount").textContent = chosen.length ? t("web.storesPicked", { n: chosen.length, max: maxStores() }) : "";
+}
+$("stores").onclick = (e) => {
+  const st = e.target.closest("[data-pick]")?.dataset.pick; if (!st) return;
+  const i = chosen.indexOf(st);
+  if (i >= 0) { chosen.splice(i, 1); delete custom[st]; }
+  else if (chosen.length >= (maxStores())) { return say(t("web.maxErr", { n: maxStores() }), "err"); }
+  else chosen.push(st);
+  say(""); render();
+};
+$("moreStores").onclick = () => { showAll = true; renderStores(); };
+$("find").onclick = async () => {     // → "" on success, else the error shown (the hero ZIP box shows it too)
+  const loc = $("loc").value.trim(); if (!loc) { $("loc").focus(); return "-"; }
+  say(t("web.looking"));
+  try {
+    // never spin forever: a slow upstream answers with a retry hint after 25 s
+    found = await api(`/api/stores?location=${encodeURIComponent(loc)}&family=${encodeURIComponent(family)}`,
+                      { signal: AbortSignal.timeout(25000) });
+    found.forEach(s => known[s.number] = s); showAll = false;
+    say(found.length ? "" : t("web.none")); render(); return "";
+  } catch (e) {
+    const msg = e.name === "TimeoutError" || e.name === "AbortError" ? t("web.lookupSlow") : e.message;
+    say(msg, "err"); return msg;
+  }
+};
+$("loc").onkeydown = (e) => { if (e.key === "Enter") $("find").click(); };
+
+function renderAdv() {
+  if (!chosen.length) { $("adv").innerHTML = `<p class="hint">${esc(t("web.s3empty"))}</p>`; return; }
+  const ps = products(), ss = [...new Set(ps.map(p => p.size))];
+  $("adv").innerHTML = chosen.map(st => {
+    const s = known[st] || { name: st }, sel = partsFor(st);
+    const rows = ss.map(sz => `<div class="size-row"><div class="size">${esc(sz)}</div><div class="cells">` + ps.filter(p => p.size === sz).map(p => {
+      const live = s.stock && s.stock[p.part];
+      return `<button type="button" class="cell ${sel.has(p.part) ? "on" : ""} ${live ? "instock" : ""}" data-store="${esc(st)}" data-part="${esc(p.part)}">
+        <span class="sw" style="background:${SWATCH[p.color] || "#999"}"></span>${esc(p.color)}${live ? ' <span class="dotok"></span>' : ""}</button>`;
+    }).join("") + `</div></div>`).join("");
+    const head = `<b>${esc(s.name)}</b>` + (custom[st] ? `<span class="tag">${esc(t("web.custom"))}</span><button type="button" class="linkbtn" data-reset="${esc(st)}">${esc(t("web.reset"))}</button>` : "");
+    return `<div class="store-adv"><div class="head">${head}</div>${rows}</div>`;
+  }).join("");
+}
+$("adv").onclick = (e) => {
+  const el = e.target.closest("[data-part],[data-reset]"); if (!el) return;
+  if (el.dataset.reset) delete custom[el.dataset.reset];
+  else {
+    const st = el.dataset.store, set = new Set(partsFor(st));
+    set.has(el.dataset.part) ? set.delete(el.dataset.part) : set.add(el.dataset.part);
+    custom[st] = set;
+  }
+  render();
+};
+
+function renderSummary() {
+  const ws = watches().filter(w => w.parts.length), byPart = Object.fromEntries(products().map(p => [p.part, p]));
+  const models = new Set(ws.flatMap(w => w.parts)).size;
+  if (!ws.length || !models) { $("summary").textContent = t("web.summaryNone"); }
+  else {
+    const line = t("web.summary", { models: t("web.nModels", { n: models }), stores: t("web.nStores", { n: ws.length }),
+      days: days(), channels: t(!texting() ? "web.chEmail" : $("email").value.trim() ? "web.chText" : "web.chTextOnly") })
+      + (bonus ? ` (${t("web.summaryBonus", { days: bonus })})` : "");
+    $("summary").innerHTML = `<b>${esc(line)}</b><ul>` + ws.map(w =>
+      `<li>${esc(w.store_name)}: ${w.parts.map(p => esc(byPart[p] ? short(byPart[p]) : p)).join(", ")}</li>`).join("") + "</ul>";
+  }
+  $("submit").textContent = cfg.payments ? t("web.startPay", { price: price((cfg.price_cents || 0) / 100), days: days() }) : t("web.start");
+}
+function render() { renderStep1(); renderStores(); renderAdv(); renderSummary(); }
+
+const texting = () => !$("phone").hidden && $("smsOpt").checked && !!$("phone").value.trim();
+$("smsOpt").onchange = () => { $("optin").classList.toggle("on", $("smsOpt").checked); if ($("smsOpt").checked && !$("phone").value.trim()) $("phone").focus(); renderSummary(); };
+$("phone").oninput = $("email").oninput = () => renderSummary();
+function contactProblem() {   // → [message key, field to focus] or null
+  const phone = !$("phone").hidden && $("phone").value.trim(), email = $("email").value.trim();
+  if (phone && !$("smsOpt").checked) return ["web.needTick", "smsOpt"];
+  if (!phone && !email) return $("phone").hidden ? ["web.needEmail", "email"] : ["web.needContact", "phone"];
+  return null;
+}
+async function api(path, opts) {
+  const r = await fetch(path, opts); const b = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(b.detail || ("HTTP " + r.status)); return b;
+}
+$("submit").onclick = async () => {
+  if (!picked().size && !Object.keys(custom).length) return say(t("web.pickModel"), "err");
+  if (!chosen.length) return say(t("web.pickStore"), "err");
+  const empty = watches().find(w => !w.parts.length);
+  if (empty) return say(t("web.storeNoModels", { store: empty.store_name }), "err");
+  const bad = contactProblem();
+  if (bad) { $(bad[1]).focus(); return say(t(bad[0]), "err"); }
+  const sms = texting();
+  $("submit").disabled = true; say(t("web.saving"));
+  try {
+    const r = await api("/api/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
+      email: $("email").value, phone: sms ? $("phone").value : "", sms_opt_in: sms, carrier, lang, ref, stores: watches() }) });
+    location.href = r.checkout_url || `/done?sub=${encodeURIComponent(r.id)}&sig=${encodeURIComponent(r.sig || "")}`;
+  } catch (e) { say(e.message, "err"); $("submit").disabled = false; }
+};
+
+document.querySelectorAll(".hero-img figure").forEach(f => f.onclick = () => {   // tap a photo = pick that color
+  if (!catalog.length) return;
+  colors.add(f.dataset.color); render(); $("step1").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+function next() {     // sticky button: take the visitor to the first unfinished step, or submit
+  const go = (id, focus) => { $(id).scrollIntoView({ behavior: "smooth", block: "start" }); if (focus) setTimeout(() => $(focus).focus(), 400); };
+  if (!picked().size && !Object.keys(custom).length) return go("step1");
+  if (!chosen.length) return go("step2", "loc");
+  const bad = contactProblem();
+  if (bad) return go("step4", bad[1]);
+  $("submit").click();
+}
+$("stickyGo").onclick = next;
+$("heroCta").onclick = () => $("step1").scrollIntoView({ behavior: "smooth", block: "start" });
+$("zipForm").onsubmit = async (e) => {    // ZIP first: show this visitor their own stores, and have step 2 ready
+  e.preventDefault();
+  const z = $("heroZip").value.trim(); if (!z) return $("heroZip").focus();
+  $("loc").value = z; $("near").textContent = t("web.looking");
+  const err = await $("find").onclick();
+  $("near").textContent = err ? err : found.length ? t("web.nearYou", { n: found.length, mi: found[0].miles }) : t("web.none");
+};
+const LOC = document.documentElement.lang + "-u-ca-gregory-nu-latn";
+const fmt = (iso, opts) => new Date(/Z$|[+-]\d\d:\d\d$/.test(iso) ? iso : iso + "Z").toLocaleString(LOC, opts);
+async function showRestocks() {
+  const r = await api("/api/restocks/recent?limit=8");
+  if (!r.items.length) return;
+  const name = Object.fromEntries(catalog.map(p => [p.part, p.name]));
+  const short = (part) => (name[part] || part).replace(/^iPhone Duo\s+/, "");
+  const live = (r.live || [])[0], top = live || r.items[0];
+  $("nWhen").textContent = live ? t("web.liveNow") : fmt(top.started_at, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+  $("nTitle").textContent = name[top.part] || top.part;
+  $("nBody").innerHTML = esc(t("web.notifBody", { store: "\u0000" })).replace("\u0000", `<span class="blur">${esc(top.store_name.replace(/^Apple /, ""))}</span>`);
+  $("notif").hidden = false;
+  const done = r.items[0];
+  $("realLine").innerHTML = `<span><b>${esc(t(live ? "web.liveNow" : "web.realAlert"))}</b>${live ? "" : " · " + esc(t("web.soldOutIn", { min: Math.max(1, done.minutes) }))}</span>`
+    + `<span>${esc(t("web.caught", { n: r.count, date: fmt(r.since, { month: "short", day: "numeric" }) }))}</span>`;
+  $("realLine").hidden = false;
+  $("recentList").innerHTML = r.items.map(x => `<li><time>${esc(fmt(x.started_at, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }))}</time>
+    <span><span class="blur">${esc(x.store_name)}</span> · ${esc(short(x.part))}</span><span class="dur">${esc(t("web.lasted", { min: Math.max(1, x.minutes) }))}</span></li>`).join("");
+  $("recent").hidden = false;
+  pulse(r.last_check_s);
+}
+function pulse(s) { if (s == null) return; $("pulse").textContent = t("web.checkingNow", { s }); $("pulse").hidden = false; }
+setInterval(() => api("/api/restocks/recent?limit=1").then(r => pulse(r.last_check_s)).catch(() => {}), 15000);
+async function showProof() {     // real order screenshots from customers, newest first (same list as /stories)
+  const items = await (await fetch("/static/proof/proof.json", { cache: "no-store" })).json();
+  if (!items.length) return;
+  $("strip").innerHTML = items.map(i => `<figure><img src="${esc(i.src)}" alt="" loading="lazy"><figcaption>${esc(i[lang] || i.en || "")}</figcaption></figure>`).join("");
+  $("proofAll").href = "/stories?lang=" + encodeURIComponent(lang);
+  $("proof").hidden = false;
+}
+let submitOnScreen = false;
+const updateSticky = () => { $("sticky").hidden = submitOnScreen || !cfg.payments; };   // the real button on screen = no bar
+if ("IntersectionObserver" in window)
+  new IntersectionObserver(([e]) => { submitOnScreen = e.isIntersecting; updateSticky(); }).observe($("submit"));
+
+fill();
+(async () => {
+  [cfg, catalog] = await Promise.all([api("/api/config"), api("/api/products")]);
+  family = (catalog[0] || {}).family || "";
+  fill(); renderFamilies(); render();
+  api("/api/stories/summary").then(x => { $("storiesWrap").hidden = !(x.got || x.proof); }).catch(() => {});
+  showRestocks().catch(() => {});
+  showProof().catch(() => {});
+  if (ref) api("/api/referral/check?code=" + encodeURIComponent(ref)).then(x => {
+    if (!x.valid) return;
+    bonus = x.days; fill(); render();
+    $("refBanner").textContent = t("web.refBanner", { days: x.days, total: days(), price: price((cfg.price_cents || 0) / 100) });
+    $("refBanner").hidden = false;
+  }).catch(() => {});
+})().catch(() => say(t("web.loadFail"), "err"));
+</script>
+</body>
+</html>

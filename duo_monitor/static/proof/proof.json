@@ -1,0 +1,74 @@
+[
+  {
+    "src": "/static/proof/02-iphone-duo-in-hand.webp",
+    "en": "In hand: iPhone Duo + case",
+    "zh": "到手：iPhone Duo + 保护壳",
+    "zh-Hant": "到手：iPhone Duo + 保護殼",
+    "es": "Ya en mano: iPhone Duo + funda",
+    "vi": "Đã cầm trên tay: iPhone Duo + ốp lưng",
+    "ko": "손에 넣었어요: iPhone Duo + 케이스",
+    "ja": "ゲット：iPhone Duo＋ケース",
+    "ar": "وصل إلى يدي: iPhone Duo مع الغطاء",
+    "fa": "به دستم رسید: iPhone Duo + قاب"
+  },
+  {
+    "src": "/static/proof/04-ordered-4-min-after-alert.webp",
+    "en": "Ordered 4 min after the alert: iPhone Duo 256GB Star White",
+    "zh": "收到提醒 4 分钟后下单：iPhone Duo 256GB Star White",
+    "zh-Hant": "收到提醒 4 分鐘後下單：iPhone Duo 256GB Star White",
+    "es": "Pedido 4 min después de la alerta: iPhone Duo 256GB Star White",
+    "vi": "Đặt hàng 4 phút sau thông báo: iPhone Duo 256GB Star White",
+    "ko": "알림 4분 뒤 주문: iPhone Duo 256GB Star White",
+    "ja": "通知の4分後に注文：iPhone Duo 256GB Star White",
+    "ar": "طلب بعد 4 دقائق من التنبيه: iPhone Duo 256GB Star White",
+    "fa": "سفارش 4 دقیقه بعد از اعلان: iPhone Duo 256GB Star White"
+  },
+  {
+    "src": "/static/proof/03-real-text-alert.webp",
+    "en": "Real text alert we sent · Nov 3, 9:53 AM",
+    "zh": "我们发出的真实短信提醒 · 11月3日 9:53",
+    "zh-Hant": "我們發出的真實簡訊提醒 · 11月3日 9:53",
+    "es": "Alerta real por SMS · 3 nov, 9:53 a. m.",
+    "vi": "Tin nhắn báo hàng thật · 9:53 sáng 3/11",
+    "ko": "실제로 보낸 문자 알림 · 11월 3일 오전 9:53",
+    "ja": "実際に送ったSMS通知・11月3日 9:53",
+    "ar": "تنبيه SMS حقيقي أرسلناه · 3 نوفمبر، 9:53 ص",
+    "fa": "پیامک واقعی که فرستادیم · 3 نوامبر، 9:53"
+  },
+  {
+    "src": "/static/proof/05-pickup-booked.webp",
+    "en": "Pickup booked for the next morning",
+    "zh": "第二天上午到店取机",
+    "zh-Hant": "隔天上午到門市取機",
+    "es": "Recogida reservada para la mañana siguiente",
+    "vi": "Hẹn nhận máy sáng hôm sau",
+    "ko": "다음 날 아침 픽업 예약",
+    "ja": "翌朝の受け取りを予約",
+    "ar": "حجز الاستلام لصباح اليوم التالي",
+    "fa": "تحویل برای صبح روز بعد رزرو شد"
+  },
+  {
+    "src": "/static/proof/06-real-email-alert.webp",
+    "en": "Real email alert · Nov 3, 9:52 AM",
+    "zh": "真实邮件提醒 · 11月3日 9:52",
+    "zh-Hant": "真實郵件提醒 · 11月3日 9:52",
+    "es": "Alerta real por email · 3 nov, 9:52 a. m.",
+    "vi": "Email báo hàng thật · 9:52 sáng 3/11",
+    "ko": "실제 이메일 알림 · 11월 3일 오전 9:52",
+    "ja": "実際のメール通知・11月3日 9:52",
+    "ar": "تنبيه بريد إلكتروني حقيقي · 3 نوفمبر، 9:52 ص",
+    "fa": "ایمیل اعلان واقعی · 3 نوامبر، 9:52"
+  },
+  {
+    "src": "/static/proof/01-pickup-order.webp",
+    "en": "Apple order: iPhone Duo 512GB Star White, in-store pickup",
+    "zh": "Apple 订单：iPhone Duo 512GB Star White，到店自提",
+    "zh-Hant": "Apple 訂單：iPhone Duo 512GB Star White，門市取貨",
+    "es": "Pedido de Apple: iPhone Duo 512GB Star White, para recoger en tienda",
+    "vi": "Đơn Apple: iPhone Duo 512GB Star White, nhận tại cửa hàng",
+    "ko": "Apple 주문: iPhone Duo 512GB Star White, 매장 픽업",
+    "ja": "Appleの注文：iPhone Duo 512GB Star White、店舗受け取り",
+    "ar": "طلب من Apple: iPhone Duo 512GB Star White، استلام من المتجر",
+    "fa": "سفارش Apple: iPhone Duo 512GB Star White، تحویل حضوری"
+  }
+]
