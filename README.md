@@ -4,7 +4,10 @@
 ![Python](https://img.shields.io/badge/python-3.12%20%7C%203.14-blue)
 ![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue)
 
-**Check whether iPhone Duo is available for in-store pickup at your Apple Store, and get a text the moment it is.**
+## Get your iPhone Duo ASAP ⚡
+
+**GetDuoNow checks whether iPhone Duo is available for in-store pickup at your Apple Store every 30 seconds, and
+texts you the second it's back.** Restocks can vanish in about a minute; this is how you get there first.
 
 Live at [duo.solescout.ai](https://duo.solescout.ai). $4.99 for 14 days, no account, nine languages.
 Demo video: [Instagram Reel](https://www.instagram.com/reel/DfY_GirmT2C/).
