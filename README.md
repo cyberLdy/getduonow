@@ -7,6 +7,7 @@
 **Check whether iPhone Duo is available for in-store pickup at your Apple Store, and get a text the moment it is.**
 
 Live at [duo.solescout.ai](https://duo.solescout.ai). $4.99 for 14 days, no account, nine languages.
+Demo video: [Instagram Reel](https://www.instagram.com/reel/DfY_GirmT2C/).
 
 ![GetDuoNow](duo_monitor/static/og.png)
 
