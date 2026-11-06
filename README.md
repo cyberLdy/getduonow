@@ -2,12 +2,16 @@
 
 [![CI](https://github.com/cyberLdy/getduonow/actions/workflows/ci.yml/badge.svg)](https://github.com/cyberLdy/getduonow/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.12%20%7C%203.14-blue)
-![License: MIT](https://img.shields.io/badge/license-MIT-green)
+![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue)
 
 **Check whether iPhone Duo is available for in-store pickup at your Apple Store, and get a text the moment it is.**
 
 Live at [duo.solescout.ai](https://duo.solescout.ai). $4.99 for 14 days, no account, nine languages.
 Demo video: [Instagram Reel](https://www.instagram.com/reel/DfY_GirmT2C/).
+
+> **Hosted or self-hosted.** The code is open source under AGPL-3.0. If you'd rather not run a server, outbound IPs
+> that Apple won't rate-limit, a registered SMS sender and Stripe, use the hosted version at
+> [duo.solescout.ai](https://duo.solescout.ai).
 
 ![GetDuoNow](duo_monitor/static/og.png)
 
@@ -151,4 +155,8 @@ request rates low.
 
 ## License
 
-MIT
+[GNU AGPL-3.0](LICENSE). You can use, modify and self-host GetDuoNow. If you run a modified version as a network
+service for others, you must publish your changes under the same license.
+
+The hosted service at [duo.solescout.ai](https://duo.solescout.ai) is run by the author. For a commercial license
+without the AGPL obligations, contact support@solescout.ai.
